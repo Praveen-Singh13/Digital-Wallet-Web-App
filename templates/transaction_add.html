@@ -1,0 +1,226 @@
+{% extends "layout.html" %}
+{% block title %}Add Transaction{% endblock %}
+
+{% block content %}
+
+    <div class="txn-container fade-in">
+
+        <div class="page-header glass-card slide-down">
+            <h2 class="page-title">
+                {% if edit %}Edit Transaction{% else %}Add Transaction{% endif %}
+            </h2>
+            <p class="subtitle">Record your income or expenses</p>
+        </div>
+
+        <div class="glass-card pop-in txn-card">
+
+            <form action="{% if edit %}{{ url_for('transactions.edit_transaction', transaction_id=transaction.id) }}{% else %}{{ url_for('transactions.add_transaction') }}{% endif %}" method="POST" class="txn-form">
+
+                <div class="input-group slide-up">
+                    <label>Amount</label>
+                    <input type="number" name="amount" step="0.01" placeholder="Enter amount" required value="{% if edit %}{{ transaction.amount }}{% endif %}">
+                </div>
+
+                <div class="input-group slide-up">
+                    <label>Merchant</label>
+                    <input type="text" name="merchant" placeholder="Amazon, McDonalds..." required value="{% if edit %}{{ transaction.merchant }}{% endif %}">
+                </div>
+
+                <div class="input-group slide-up">
+                    <label>Category</label>
+                    <select name="category_id" required>
+                        {% for c in categories %}
+                            <option value="{{ c.id }}" {% if edit and c.name == transaction.category %}selected{% endif %}>
+                                {{ c.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group slide-up">
+                    <label>Type</label>
+                    <select name="type" required>
+                        <option value="expense" {% if edit and transaction.type=='expense' %}selected{% endif %}>
+                            Expense
+                        </option>
+                        <option value="income" {% if edit and transaction.type=='income' %}selected{% endif %}>
+                            Income
+                        </option>
+                    </select>
+                </div>
+
+                <button class="btn-primary glow-on-hover" type="submit">
+                    {% if edit %}Update Transaction{% else %}Add Transaction{% endif %}
+                </button>
+
+                {% if edit %}
+                    <a href="{{ url_for('transactions.transactions_home') }}" class="cancel-btn fade-in">
+                        Cancel
+                    </a>
+                {% endif %}
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <style>
+        .txn-container {
+            padding: 25px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            opacity: .7;
+        }
+
+        .txn-card {
+            padding: 30px;
+            margin-top: 25px;
+            border-radius: 20px;
+        }
+
+        .txn-form {
+            margin-top: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            margin-bottom: 6px;
+            opacity: .8;
+        }
+
+        .input-group input,
+        .input-group select {
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.12);
+            border: none;
+            outline: none;
+            color: white;
+            height: 46px !important;
+        /* FIX: consistent height */
+            font-size: 1rem !important;
+        /* FIX: readable text */
+        }
+
+        select option {
+            background: #1f1f1f !important;
+            color: #fff !important;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 12px;
+            background: #6c63ff;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: .25s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.35);
+        }
+
+        .glow-on-hover:hover {
+            box-shadow: 0 0 10px #6c63ff, 0 0 20px #6c63ff88;
+        }
+
+        .cancel-btn {
+            display: block;
+            margin-top: 14px;
+            text-align: center;
+            color: #ff5252;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: #ff525222;
+            transition: .2s;
+        }
+
+        .cancel-btn:hover {
+            box-shadow: 0 0 10px rgba(255, 82, 82, 0.4);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            transform: translateY(20px) scale(.95);
+            opacity: 0;
+            transition: .5s ease;
+        }
+
+        .glass-card.visible {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .fade-in {
+            animation: fadeIn .7s ease forwards;
+        }
+
+        .slide-down {
+            opacity: .0;
+            transform: translateY(-20px);
+            animation: slideDown .7s ease forwards;
+        }
+
+        .pop-in {
+            transform: scale(.92);
+            opacity: 0;
+            animation: popIn .6s ease forwards;
+        }
+
+        .slide-up {
+            animation: slideUp .5s ease;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+{% endblock %}

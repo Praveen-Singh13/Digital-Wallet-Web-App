@@ -1,0 +1,249 @@
+{% extends "layout.html" %}
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analytics.css') }}?v=10">
+{% endblock %}
+{% block title %}Analytics{% endblock %}
+
+{% block content %}
+    <div class="analytics-container fade-in-up">
+
+        <div class="page-header glass-card slide-down">
+            <h2 class="page-title">Spending Analytics</h2>
+            <p class="subtitle">Smart insights powered by your transactions</p>
+        </div>
+
+        {% if alerts %}
+            <div class="alerts-group">
+                {% for a in alerts %}
+                    <div class="alert alert-{{ a.type }} fade-in">
+                        {{ a.message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="analytics-grid">
+
+            <div class="glass-card scale-in card-summary">
+                <h3 class="card-title">Monthly Summary</h3>
+
+                <div class="summary-items">
+                    <div class="summary-item">
+                        <p class="summary-label">Total Spent</p>
+                        <h2 class="summary-value">₹{{ summary.total_spent or 0 }}</h2>
+                    </div>
+
+                    <div class="summary-item">
+                        <p class="summary-label">Total Income</p>
+                        <h2 class="summary-value income">₹{{ summary.total_income or 0 }}</h2>
+                    </div>
+
+                    <div class="summary-item">
+                        <p class="summary-label">Transactions</p>
+                        <h2 class="summary-value">{{ summary.transaction_count or 0 }}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card scale-in card-chart">
+                <h3 class="card-title">Category Breakdown</h3>
+                <canvas id="categoryChart"></canvas>
+            </div>
+
+            <div class="glass-card scale-in card-chart">
+                <h3 class="card-title">Yearly Expense vs Income</h3>
+                <canvas id="yearlyChart"></canvas>
+            </div>
+
+            <div class="glass-card scale-in card-summary">
+                <h3 class="card-title">Overspending Status</h3>
+
+                {% if overspending.limit_set %}
+                    <p class="mini-text">Limit: ₹{{ overspending.limit }}</p>
+                    <p class="mini-text">Spent: ₹{{ overspending.spent }}</p>
+
+                    {% if overspending.exceeded %}
+                        <span class="status-label danger">Exceeded</span>
+                    {% else %}
+                        <span class="status-label ok">Under Limit</span>
+                    {% endif %}
+                {% else %}
+                    <p class="mini-text">No limit set for this month.</p>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+    // PAGE ANIMATIONS
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".glass-card").forEach((el, i) => {
+                setTimeout(() => el.classList.add("visible"), i * 120);
+            });
+        });
+
+    // CATEGORY PIE CHART
+        const categoryData = {
+            {
+                distribution | tojson
+            }
+        };
+        const catLabels = categoryData.map(x => x.category);
+        const catTotals = categoryData.map(x => x.total);
+
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'pie',
+            data: {
+                labels: catLabels,
+                datasets: [{
+                    data: catTotals,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                animation: {
+                    duration: 1200,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+
+    // YEARLY LINE CHART
+        const yearly = {
+            {
+                yearly | tojson
+            }
+        };
+        const months = yearly.map(x => x.month);
+        const expenses = yearly.map(x => x.expenses);
+        const income = yearly.map(x => x.income);
+
+        new Chart(document.getElementById('yearlyChart'), {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Expenses',
+                    data: expenses,
+                    borderWidth: 2
+                },
+                    {
+                        label: 'Income',
+                        data: income,
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                tension: 0.4,
+                animation: {
+                    duration: 1500,
+                    easing: 'easeOutCubic'
+                }
+            }
+        });
+    </script>
+
+    <style>
+        .analytics-container {
+            padding: 20px;
+        }
+
+        .analytics-grid {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.09);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(20px) scale(0.96);
+            transition: 0.5s ease;
+        }
+
+        .glass-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .summary-items {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .summary-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .summary-value.income {
+            color: #00c853;
+        }
+
+        .status-label {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .status-label.ok {
+            background: #00e67622;
+            color: #00e676;
+        }
+
+        .status-label.danger {
+            background: #ff525222;
+            color: #ff5252;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .alert-danger {
+            background: #ff525222;
+            color: #ff5252;
+        }
+
+        .alert-warning {
+            background: #ffb30022;
+            color: #ffb300;
+        }
+
+        .alert-info {
+            background: #29b6f622;
+            color: #29b6f6;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+{% endblock %}

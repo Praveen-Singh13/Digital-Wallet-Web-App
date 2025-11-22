@@ -1,0 +1,86 @@
+<nav class="navbar glass-nav slide-down">
+
+    <div class="nav-left">
+        <button id="sidebarToggle" class="menu-btn hover-float">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h2 class="nav-title">Welcome, {{ session.get('user_name') }}</h2>
+    </div>
+
+    <div class="nav-right">
+        <a href="{{ url_for('auth.logout') }}" class="logout-btn hover-glow">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+
+</nav>
+
+<script src="https://kit.fontawesome.com/a2e0e6ad5b.js" crossorigin="anonymous"></script>
+
+<style>
+    .navbar {
+        width: 100%;
+        padding: 15px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 18px;
+        margin-bottom: 20px;
+    }
+
+    .glass-nav {
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(14px);
+    }
+
+    .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .nav-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+    }
+
+    .menu-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.4rem;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .hover-float:hover {
+        transform: translateY(-3px) scale(1.05);
+    }
+
+    .logout-btn {
+        color: #ff5252;
+        font-weight: 600;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        background: rgba(255, 82, 82, 0.12);
+        transition: .25s;
+    }
+
+    .logout-btn:hover {
+        box-shadow: 0 0 10px #ff525288;
+    }
+
+    .slide-down {
+        opacity: 0;
+        transform: translateY(-20px);
+        animation: slideDown .7s ease forwards;
+    }
+
+    @keyframes slideDown {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>

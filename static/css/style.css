@@ -1,0 +1,348 @@
+:root {
+    --bg: #0b0c10;
+    --bg-soft: #111218;
+    --glass: rgba(255, 255, 255, 0.06);
+    --glass-strong: rgba(255, 255, 255, 0.12);
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --muted: rgba(255, 255, 255, 0.75);
+
+    --accent: 108, 99, 255;
+    --accent-hex: #6c63ff;
+
+    --success: 0, 230, 118;
+    --danger: 255, 82, 82;
+    --warning: 255, 179, 0;
+
+    --glass-blur: 14px;
+    --radius: 18px;
+    --radius-lg: 22px;
+
+    --shadow-big: 0 28px 65px rgba(0, 0, 0, 0.55);
+    --shadow-card: 0 18px 40px rgba(0, 0, 0, 0.45);
+    --shadow-soft: 0 12px 28px rgba(0, 0, 0, 0.35);
+
+    --gap: 22px;
+    --pad: 20px;
+
+    --easing: cubic-bezier(.16, 1, .3, 1);
+    --fast: .35s var(--easing);
+    --medium: .55s var(--easing);
+    --slow: .75s var(--easing);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg);
+    color: var(--muted);
+    font-family: "Poppins", system-ui, sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+}
+
+.main-container {
+    margin-left: 250px;
+    padding: 25px;
+    min-height: 100vh;
+    transition: margin-left var(--medium);
+}
+
+@media (max-width:900px) {
+    .main-container {
+        margin-left: 0;
+    }
+}
+
+.glass-card {
+    background: var(--glass);
+    backdrop-filter: blur(var(--glass-blur));
+    border-radius: var(--radius);
+    padding: var(--pad);
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--shadow-card);
+    opacity: 0;
+    transform: translateY(20px) scale(.96);
+    transition: opacity var(--medium), transform var(--medium);
+}
+
+.glass-card.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.glass-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 30px 65px rgba(0, 0, 0, 0.65);
+}
+
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn .65s var(--easing) forwards;
+}
+
+.fade-in-up {
+    opacity: 0;
+    animation: fadeUp .65s var(--easing) forwards;
+}
+
+.fade-up {
+    animation: fadeUp .6s var(--easing);
+}
+
+.slide-down {
+    opacity: 0;
+    animation: slideDown .7s var(--easing) forwards;
+}
+
+.pop-in {
+    opacity: 0;
+    transform: scale(.92);
+    animation: popIn .55s var(--easing) forwards;
+}
+
+.scale-in {
+    opacity: 0;
+    transform: scale(.9);
+    animation: scaleIn .55s var(--easing) forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.btn-primary {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent-hex);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform var(--fast), box-shadow var(--fast);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(var(--accent), 0.55);
+}
+
+.btn-primary:active {
+    transform: scale(.96);
+}
+
+.glow-on-hover:hover {
+    box-shadow: 0 0 12px var(--accent-hex), 0 0 22px rgba(var(--accent), 0.6);
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border-glass);
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: var(--fast);
+}
+
+.btn-ghost:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+input,
+select {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 12px 14px;
+    transition: background var(--fast), transform var(--fast);
+}
+
+input:focus,
+select:focus {
+    background: rgba(255, 255, 255, 0.18);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-small);
+}
+
+.red {
+    color: rgb(var(--danger));
+}
+
+.green {
+    color: rgb(var(--success));
+}
+
+.warning {
+    color: rgb(var(--warning));
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-2 {
+    margin-bottom: 12px;
+}
+
+.mb-3 {
+    margin-bottom: 18px;
+}
+
+.mt-2 {
+    margin-top: 12px;
+}
+
+.mt-3 {
+    margin-top: 18px;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid {
+    display: grid;
+    gap: var(--gap);
+}
+
+.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width:600px) {
+
+    .grid-2,
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+#sidebar {
+    transition: transform var(--medium);
+}
+
+#sidebar.open {
+    transform: translateX(0);
+}
+
+#sidebarOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--medium);
+}
+
+#sidebarOverlay.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.navbar {
+    border-radius: var(--radius);
+    background: var(--glass);
+    backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--shadow-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}

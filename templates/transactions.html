@@ -1,0 +1,389 @@
+{% extends "layout.html" %}
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transactions.css') }}?v=10">
+{% endblock %}
+{% block title %}Transactions{% endblock %}
+
+{% block content %}
+
+    <div class="transactions-container fade-in">
+
+        <div class="page-header glass-card slide-down">
+            <h2 class="page-title">Your Transactions</h2>
+            <p class="subtitle">Track, filter, and manage all your expenses & income</p>
+        </div>
+
+        <div class="glass-card pop-in filter-card">
+
+            <form id="filterForm" class="filter-form">
+
+                <div class="filter-group slide-up">
+                    <label>Category</label>
+                    <select id="filterCategory" name="category">
+                        <option value="">All</option>
+                        {% for c in categories %}
+                            <option value="{{ c.id }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group slide-up">
+                    <label>Month</label>
+                    <select id="filterMonth" name="month">
+                        <option value="">All</option>
+                        {% for i in range(1, 13) %}
+                            <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group slide-up">
+                    <label>Year</label>
+                    <select id="filterYear" name="year">
+                        <option value="">All</option>
+                        {% for i in range(2021, 2031) %}
+                            <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group slide-up">
+                    <label>Merchant</label>
+                    <input type="text" id="filterMerchant" name="merchant" placeholder="Search merchant…">
+                </div>
+
+                <button type="button" id="applyFilters" class="btn-primary glow-on-hover">Apply Filters</button>
+
+            </form>
+
+        </div>
+
+        <div class="glass-card fade-up txn-list-card">
+
+            <div class="txn-header">
+                <h3 class="section-title">Transactions</h3>
+                <a href="{{ url_for('transactions.add_transaction') }}" class="add-btn hover-glow">
+                    <i class="fas fa-plus"></i> Add Transaction
+                </a>
+            </div>
+
+            <div id="txnList">
+                {% for t in transactions %}
+                    <div class="txn-item fade-in-up" data-id="{{ t.id }}">
+
+                        <div class="txn-info">
+                            <p class="merchant">{{ t.merchant }}</p>
+                            <p class="category">{{ t.category or 'Uncategorized' }}</p>
+                        </div>
+
+                        <div class="txn-meta">
+                            <p class="date">{{ t.date }}</p>
+                        </div>
+
+                        <div class="txn-actions">
+
+                            <p class="amount {% if t.type=='expense' %}red{% else %}green{% endif %}">
+                                {% if t.type=='expense' %}-{% else %}+{% endif %} ₹{{ t.amount }}
+                            </p>
+
+                            <a href="{{ url_for('transactions.edit_transaction', transaction_id=t.id) }}" class="edit-btn hover-glow">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <button class="delete-btn hover-glow" onclick="deleteTransaction({{ t.id }})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        document.getElementById("applyFilters").addEventListener("click", () => {
+            const params = new URLSearchParams({
+                category: document.getElementById("filterCategory").value,
+                month: document.getElementById("filterMonth").value,
+                year: document.getElementById("filterYear").value,
+                merchant: document.getElementById("filterMerchant").value
+            });
+
+            fetch(`/transactions/filter?${params.toString()}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) renderTransactions(data.transactions);
+                });
+        });
+
+        function renderTransactions(list) {
+            const container = document.getElementById("txnList");
+            container.innerHTML = "";
+
+            list.forEach(t => {
+                container.innerHTML += `
+            <div class="txn-item fade-in-up">
+
+                <div class="txn-info">
+                    <p class="merchant">${t.merchant}</p>
+                    <p class="category">${t.category ?? "Uncategorized"}</p>
+                </div>
+
+                <div class="txn-meta">
+                    <p class="date">${t.date}</p>
+                </div>
+
+                <div class="txn-actions">
+
+                    <p class="amount ${t.type === "expense" ? "red" : "green"}">
+                        ${t.type === "expense" ? "-" : "+"} ₹${t.amount}
+                    </p>
+
+                    <a href="/transactions/edit/${t.id}" class="edit-btn hover-glow">
+                        <i class="fas fa-edit"></i>
+                    </a>
+
+                    <button class="delete-btn hover-glow" onclick="deleteTransaction(${t.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+            });
+        }
+
+        function deleteTransaction(id) {
+            if (!confirm("Delete this transaction?")) return;
+
+            fetch(`/transactions/delete/${id}`, {
+                method: "POST"
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector(`[data-id="${id}"]`).remove();
+                    }
+                });
+        }
+    </script>
+
+
+    <script src="https://kit.fontawesome.com/a2e0e6ad5b.js" crossorigin="anonymous"></script>
+
+
+    <style>
+        .transactions-container {
+            padding: 25px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            opacity: .7;
+        }
+
+        .filter-card {
+            padding: 25px;
+            border-radius: 18px;
+        }
+
+        .filter-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            margin-bottom: 6px;
+            opacity: .8;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 12px 14px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+        }
+
+        .txn-list-card {
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 25px;
+        }
+
+        .txn-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .add-btn {
+            padding: 10px 16px;
+            background: #6c63ff22;
+            color: #6c63ff;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .add-btn:hover {
+            box-shadow: 0 0 10px #6c63ff55;
+        }
+
+        .txn-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .txn-info .merchant {
+            font-weight: 600;
+        }
+
+        .txn-info .category {
+            opacity: .7;
+        }
+
+        .txn-meta .date {
+            opacity: .7;
+            font-size: .9rem;
+        }
+
+        .txn-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .amount {
+            font-weight: 700;
+        }
+
+        .amount.red {
+            color: #ff5252;
+        }
+
+        .amount.green {
+            color: #00e676;
+        }
+
+        .edit-btn,
+        .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .delete-btn:hover {
+            color: #ff5252;
+        }
+
+        .edit-btn:hover {
+            color: #6c63ff;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            transform: translateY(20px) scale(.95);
+            transition: .6s ease;
+        }
+
+        .glass-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .fade-in {
+            animation: fadeIn .7s ease forwards;
+        }
+
+        .slide-down {
+            animation: slideDown .7s ease forwards;
+        }
+
+        .fade-up {
+            animation: fadeUp .9s ease forwards;
+        }
+
+        .pop-in {
+            animation: popIn .6s ease forwards;
+        }
+
+        .slide-up {
+            animation: slideUp .6s ease;
+        }
+
+        .fade-in-up {
+            animation: fadeUp .6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+{% endblock %}
