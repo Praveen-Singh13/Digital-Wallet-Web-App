@@ -42,10 +42,10 @@ Frontend: HTML, CSS, JavaScript
 Charts: Chart.js
 Async: AJAX (Fetch API)
 
-Project Structure
------------------
+## Project Structure
 
-/wallet
+```
+wallet/
 │── app/
 │   │── __init__.py
 │   │
@@ -113,7 +113,7 @@ Project Structure
 │   │   └── wallet.js
 │   │
 │   └── img/
-│       └── (logos, icons)
+│       └── logos, icons...
 │
 │── tests/
 │   ├── test_auth.py
@@ -125,6 +125,7 @@ Project Structure
 │── run.py
 │── README.md
 │── requirements.txt
+```
 
 
 Installation & Setup
