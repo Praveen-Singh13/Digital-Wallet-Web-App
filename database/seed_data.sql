@@ -11,7 +11,7 @@ INSERT INTO categories (name, type, user_id) VALUES
 
 
 INSERT INTO users (name, email, password) VALUES
-('Demo User', 'demo@example.com', '$pbkdf2-sha256$29000$ZnptpFQJfV0uQp8I4.$M8cFHWlW8X94C1RJCYlnVSrRpltnB2IV/YIiYw8pNiU');
+('Demo User', 'demo@example.com', 'scrypt:32768:8:1$Qjq63pZIw3NRDp63$34d7a4b6f9867a23cdc1a02c296c46f33ee4e06cd9f9b1fc2f5447e28b70ab09c3c305d86befcbf5781c0d5c644a423c58aac4837d5c10b49794be478ed2b5d3');
 
 
 INSERT INTO wallet (user_id, balance) VALUES (1, 5000);

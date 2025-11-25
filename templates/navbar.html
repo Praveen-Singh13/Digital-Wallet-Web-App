@@ -4,18 +4,24 @@
         <button id="sidebarToggle" class="menu-btn hover-float">
             <i class="fas fa-bars"></i>
         </button>
-        <h2 class="nav-title">Welcome, {{ session.get('user_name') }}</h2>
+        {% if session.get('user_id') %}
+            <h2 class="nav-title">Welcome, {{ session.get('user_name') }}</h2>
+        {% else %}
+            <h2 class="nav-title">Digital Wallet</h2>
+        {% endif %}
     </div>
 
     <div class="nav-right">
-        <a href="{{ url_for('auth.logout') }}" class="logout-btn hover-glow">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('auth.logout') }}" class="logout-btn hover-glow">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        {% endif %}
     </div>
 
 </nav>
 
-<script src="https://kit.fontawesome.com/a2e0e6ad5b.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
     .navbar {

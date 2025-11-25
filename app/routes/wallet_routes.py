@@ -25,13 +25,16 @@ def wallet_home():
     limit = WalletModel.get_monthly_limit(user_id, now.year, now.month)
     print("LIMIT OBJECT:", limit)
 
+    recent_transactions = TransactionModel.get_recent_transactions(user_id, limit=5)
+
     return render_template(
         "wallet.html",
         balance=balance,
         categories=categories,
         year=now.year,
         month=now.month,
-        limit=limit
+        limit=limit,
+        history=recent_transactions
     )
 
 

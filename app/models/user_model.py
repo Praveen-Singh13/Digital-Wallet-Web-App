@@ -22,7 +22,10 @@ class UserModel:
         db.execute(insert_query, (name, email, hashed_password))
         db.commit()
 
-        return {"created": True, "message": "User registered successfully"}
+        # Get the ID of the newly created user
+        user_id = db.execute("SELECT last_insert_rowid()").fetchone()[0]
+
+        return {"created": True, "message": "User registered successfully", "user_id": user_id}
 
     @staticmethod
     def validate_login(email, password):

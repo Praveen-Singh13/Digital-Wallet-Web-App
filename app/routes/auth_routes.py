@@ -72,6 +72,10 @@ def signup():
 
             conn.commit()
 
+            # Initialize wallet for the new user
+            conn.execute("INSERT INTO wallet (user_id, balance) VALUES (?, ?)", (user_id, 0))
+            conn.commit()
+
             # -----------------------------
             flash("Account created successfully. Please login.", "success")
             return redirect(url_for("auth.login"))

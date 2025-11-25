@@ -112,3 +112,20 @@ class TransactionModel:
 
         rows = db.execute(query, params).fetchall()
         return [dict(r) for r in rows]
+
+    @staticmethod
+    def get_recent_transactions(user_id, limit=5):
+        db = get_db_connection()
+        query = """
+            SELECT
+                t.id, t.amount, t.type, t.date,
+                t.merchant,
+                c.name AS category
+            FROM transactions t
+            LEFT JOIN categories c ON t.category_id = c.id
+            WHERE t.user_id = ?
+            ORDER BY t.date DESC
+            LIMIT ?
+        """
+        rows = db.execute(query, (user_id, limit)).fetchall()
+        return [dict(r) for r in rows]

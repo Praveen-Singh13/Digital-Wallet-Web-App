@@ -1,28 +1,34 @@
 <aside id="sidebar" class="sidebar glass-sidebar slide-left">
 
     <div class="sidebar-header fade-in">
-        <h2 class="logo">DW</h2>
+        <a href="{{ url_for('wallet.wallet_home') }}" class="logo-link">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Digital Wallet" class="logo-img">
+        </a>
         <p class="logo-sub">Digital Wallet</p>
     </div>
 
     <nav class="sidebar-nav">
 
-        <a href="{{ url_for('wallet.wallet_home') }}" class="nav-item hover-glow {% if request.path.startswith('/wallet') %}active{% endif %}">
+        <a href="{{ url_for('wallet.wallet_home') }}"
+            class="nav-item hover-glow {% if request.path.startswith('/wallet') %}active{% endif %}">
             <i class="fas fa-wallet"></i>
             <span>Wallet</span>
         </a>
 
-        <a href="{{ url_for('transactions.transactions_home') }}" class="nav-item hover-glow {% if request.path.startswith('/transactions') %}active{% endif %}">
+        <a href="{{ url_for('transactions.transactions_home') }}"
+            class="nav-item hover-glow {% if request.path.startswith('/transactions') %}active{% endif %}">
             <i class="fas fa-exchange-alt"></i>
             <span>Transactions</span>
         </a>
 
-        <a href="{{ url_for('analytics.analytics_home') }}" class="nav-item hover-glow {% if request.path.startswith('/analytics') %}active{% endif %}">
+        <a href="{{ url_for('analytics.analytics_home') }}"
+            class="nav-item hover-glow {% if request.path.startswith('/analytics') %}active{% endif %}">
             <i class="fas fa-chart-pie"></i>
             <span>Analytics</span>
         </a>
 
-        <a href="{{ url_for('profile.profile_home') }}" class="nav-item hover-glow {% if request.path.startswith('/profile') %}active{% endif %}">
+        <a href="{{ url_for('profile.profile_home') }}"
+            class="nav-item hover-glow {% if request.path.startswith('/profile') %}active{% endif %}">
             <i class="fas fa-user"></i>
             <span>Profile</span>
         </a>
@@ -58,14 +64,36 @@
         text-align: center;
     }
 
-    .logo {
-        font-size: 2rem;
-        font-weight: 700;
+    .logo-link {
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+
+    .logo-link:hover {
+        transform: scale(1.05);
+    }
+
+    .logo-img {
+        width: 80px;
+        height: 80px;
+        filter: drop-shadow(0 0 15px rgba(108, 99, 255, 0.6));
+        animation: logoGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes logoGlow {
+        from {
+            filter: drop-shadow(0 0 15px rgba(108, 99, 255, 0.6));
+        }
+
+        to {
+            filter: drop-shadow(0 0 25px rgba(108, 99, 255, 0.9));
+        }
     }
 
     .logo-sub {
         font-size: .9rem;
         opacity: .6;
+        margin-top: 10px;
     }
 
     .sidebar-nav {
